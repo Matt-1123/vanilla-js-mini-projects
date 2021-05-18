@@ -19,10 +19,22 @@ let playable = true;
 const correctLetters = [];
 const wrongLetters = [];
 
+function getRandomWord() {
+  fetch(`https://random-word-api.herokuapp.com/word?number=1&swear=0`)
+    .then((res) => res.json())
+    .then((data) => {
+      const randomWord = data[0];
+      console.log(randomWord);
+      displayWord(randomWord);
+    });
+}
+getRandomWord();
+
 // Show hidden word
-function displayWord() {
+function displayWord(word) {
+  const randomWord = word;
   wordEl.innerHTML = `
-    ${selectedWord
+    ${randomWord
       .split("")
       .map(
         (letter) => `
@@ -36,7 +48,7 @@ function displayWord() {
 
   const innerWord = wordEl.innerText.replace(/[ \n]/g, "");
 
-  if (innerWord === selectedWord) {
+  if (innerWord === randomWord) {
     finalMessage.innerText = "Congratulations! You won! 😃";
     finalMessageRevealWord.innerText = "";
     popup.style.display = "flex";
@@ -89,7 +101,7 @@ window.addEventListener("keydown", (e) => {
     if (e.keyCode >= 65 && e.keyCode <= 90) {
       const letter = e.key.toLowerCase();
 
-      if (selectedWord.includes(letter)) {
+      if (randomWord.includes(letter)) {
         if (!correctLetters.includes(letter)) {
           correctLetters.push(letter);
 
@@ -120,11 +132,11 @@ playAgainBtn.addEventListener("click", () => {
 
   selectedWord = words[Math.floor(Math.random() * words.length)];
 
-  displayWord();
+  getRandomWord();
 
   updateWrongLettersEl();
 
   popup.style.display = "none";
 });
 
-displayWord();
+getRandomWord();
